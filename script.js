@@ -1,64 +1,43 @@
-/**
- * CareerCraft - Client Side Logic
- */
-
-// Handle service selection from buttons to update form dropdown
+// Function to sync service card selection with form dropdown
 function selectService(serviceName) {
     const serviceDropdown = document.getElementById('service');
     serviceDropdown.value = serviceName;
+    
+    // Smooth scroll to the form
+    document.querySelector('#order').scrollIntoView({ behavior: 'smooth' });
 }
 
-// Form Submission Handling
+// Form Submission with Feedback UI
 document.getElementById('resumeForm').addEventListener('submit', function(e) {
     e.preventDefault();
+    
+    const submitBtn = e.target.querySelector('button');
+    submitBtn.innerText = "Processing...";
+    submitBtn.disabled = true;
 
-    // Collect Form Data
-    const formData = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        branch: document.getElementById('branch').value,
-        year: document.getElementById('year').value,
-        target: document.getElementById('target').value,
-        service: document.getElementById('service').value,
-        details: document.getElementById('details').value
-    };
+    // Simulate small delay for professional feel
+    setTimeout(() => {
+        const name = document.getElementById('name').value;
+        const service = document.getElementById('service').value;
+        const email = document.getElementById('email').value;
 
-    // Construct Mailto Link
-    const subject = encodeURIComponent(`New CareerCraft Order: ${formData.service}`);
-    const body = encodeURIComponent(
-        `Order Details:\n\n` +
-        `Name: ${formData.name}\n` +
-        `Email: ${formData.email}\n` +
-        `Phone: ${formData.phone}\n` +
-        `Branch: ${formData.branch}\n` +
-        `Year: ${formData.year}\n` +
-        `Target: ${formData.target}\n` +
-        `Service: ${formData.service}\n` +
-        `Notes: ${formData.details}`
-    );
+        // mailto link construction
+        const subject = `New Order: ${service} for ${name}`;
+        const body = `Hi CareerCraft,\n\nI want to order the ${service} plan.\n\nName: ${name}\nEmail: ${email}\n\nPlease contact me for the next steps.`;
+        
+        window.location.href = `mailto:contact@careercraft.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-    // Open email client
-    window.location.href = `mailto:contact@careercraft.com?subject=${subject}&body=${body}`;
-
-    // Show Success UI
-    document.getElementById('resumeForm').classList.add('hidden');
-    document.getElementById('successMessage').classList.remove('hidden');
+        // Show success state
+        document.getElementById('resumeForm').classList.add('hidden');
+        document.getElementById('successMessage').classList.remove('hidden');
+    }, 800);
 });
 
-// Reset Form to allow new submissions
 function resetForm() {
     document.getElementById('resumeForm').reset();
     document.getElementById('resumeForm').classList.remove('hidden');
     document.getElementById('successMessage').classList.add('hidden');
+    const submitBtn = document.querySelector('#resumeForm button');
+    submitBtn.innerText = "Submit Application";
+    submitBtn.disabled = false;
 }
-
-// Simple Sticky Navbar shadow on scroll
-window.addEventListener('scroll', function() {
-    const nav = document.querySelector('.navbar');
-    if (window.scrollY > 50) {
-        nav.style.boxShadow = "0 4px 20px rgba(0,0,0,0.1)";
-    } else {
-        nav.style.boxShadow = "0 2px 10px rgba(0,0,0,0.05)";
-    }
-});
